@@ -13,7 +13,9 @@ define hlk_tap6_openvpn::instance
 (
   Stdlib::IP::Address::V4           $vpn_ip,
   String                            $static_key,
+  Integer                           $remote_port = 1194,
   Optional[Stdlib::IP::Address::V4] $remote = undef
+
 )
 {
 
@@ -29,10 +31,13 @@ define hlk_tap6_openvpn::instance
     notify  => Service['openvpnservice'],
   }
 
-  # Only add the "remote" line on HLK clients
-  $remote_line = $remote ? {
-    undef   => '',
-    default => "remote ${remote}"
+  if $remote {
+    # This is a "client" instance and needs to know where to connect
+    $connectivity_line = "remote ${remote} ${remote_port} udp"
+  } else {
+    # This is a "server" instance and needs a port number for cases where
+    # multiple OpenVPN instances are running on the same server.
+    $connectivity_line = "port ${remote_port}"
   }
 
   # Install OpenVPN config
