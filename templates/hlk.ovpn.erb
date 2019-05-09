@@ -1,0 +1,6 @@
+### THIS FILE IS MANAGED BY PUPPET. ANY MANUAL CHANGES WILL GET OVERWRITTEN.
+
+dev tap
+<%= @remote_line %>
+ifconfig <%= @vpn_ip %> 255.255.255.0
+secret <%= @identifier %>.key
