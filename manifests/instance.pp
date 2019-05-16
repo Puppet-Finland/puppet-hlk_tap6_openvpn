@@ -16,6 +16,10 @@
 #   The IPv4 address for the tap-windows6 adapter, including netmask in CIDR notation.
 # @interface_ipv6
 #   The IPv6 address for the tap-windows6 adapter, including netmask in CIDR notation.
+# @interface_gw_ipv4
+#   The default IPv4 gateway for the tap-windows6 adapter. Leave empty if no gateway.
+# @interface_gw_ipv6
+#   The default IPv6 gateway for the tap-windows6 adapter. Leave empty if no gateway.
 # @param allow_address_ipv4
 #   The IPv4 address or network (e.g. "172.16.5.8") from which to allow
 #   connections to the remote.
@@ -28,7 +32,9 @@ define hlk_tap6_openvpn::instance
   Stdlib::IP::Address::V6           $interface_ipv6,
   String                            $static_key,
   Integer                           $port = 1194,
-  Optional[Stdlib::IP::Address::V4] $allow_address_ipv4 = '127.0.0.1'
+  Optional[Stdlib::IP::Address::V4] $allow_address_ipv4 = '127.0.0.1',
+  Optional[Stdlib::IP::Address::V4] $interface_gw_ipv4 = undef,
+  Optional[Stdlib::IP::Address::V6] $interface_gw_ipv6 = undef,
 )
 {
 
@@ -83,14 +89,25 @@ define hlk_tap6_openvpn::instance
   # more likely that some of the more aggressively-timed HLK tests pass.
   $tap_adapter_ips = {  'IPv4' => $interface_ipv4,
                         'IPv6' => $interface_ipv6, }
+  $tap_adapter_gws = {  'IPv4' => $interface_gw_ipv4,
+                        'IPv6' => $interface_gw_ipv6, }
 
   # See https://github.com/PowerShell/NetworkingDsc/wiki/IPAddress
   #
   $tap_adapter_ips.each |$item| {
     dsc_xipaddress { "${interface_alias}-${item[0]}":
       dsc_interfacealias => $interface_alias,
-      dsc_ipaddress      => $item[1],
       dsc_addressfamily  => $item[0],
+      dsc_ipaddress      => $item[1],
+    }
+  }
+
+  # See https://github.com/PowerShell/NetworkingDsc/wiki/DefaultGatewayAddress
+  $tap_adapter_gws.each |$item| {
+    dsc_xdefaultgatewayaddress { "${interface_alias}-${item[0]}":
+      dsc_interfacealias => $interface_alias,
+      dsc_addressfamily  => $item[0],
+      dsc_address        => $item[1],
     }
   }
 }
