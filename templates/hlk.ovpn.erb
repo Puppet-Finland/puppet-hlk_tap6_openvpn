@@ -1,6 +1,7 @@
 ### THIS FILE IS MANAGED BY PUPPET. ANY MANUAL CHANGES WILL GET OVERWRITTEN.
-
 dev tap
-<%= @connectivity_line %>
-ifconfig <%= @vpn_ip %> 255.255.255.0
+mode p2p
+cipher AES-256-CBC
 secret <%= @identifier %>.key
+remote <%= @remote %>
+verb 3
