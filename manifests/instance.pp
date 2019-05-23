@@ -84,6 +84,11 @@ define hlk_tap6_openvpn::instance
     dsc_interfacedescription => 'TAP-Windows Adapter V9',
   }
 
+  dsc_xnetconnectionprofile { $interface_alias:
+    dsc_interfacealias  => $interface_alias,
+    dsc_networkcategory => 'Private',
+  }
+
   # Define static IPv4 and IPv6 settings for the tap-windows6 adapter. This
   # reduces the delay when bringing up and down the connection and makes it
   # more likely that some of the more aggressively-timed HLK tests pass.
