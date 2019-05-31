@@ -1,6 +1,7 @@
 ### THIS FILE IS MANAGED BY PUPPET. ANY MANUAL CHANGES WILL GET OVERWRITTEN.
 dev tap
 mode p2p
+port <%= @port %>
 cipher AES-256-CBC
 secret <%= @identifier %>.key
 remote <%= @remote %>
