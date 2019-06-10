@@ -36,7 +36,7 @@ define hlk_tap6_openvpn::instance
   String                            $static_key,
   Integer                           $port = 1194,
   String                            $messagedevice = 'Ethernet',
-  Optional[Stdlib::IP::Address::V4] $allow_address_ipv4 = '127.0.0.1',
+  Optional[String]                  $allow_address_ipv4 = '127.0.0.1',
   Optional[Stdlib::IP::Address::V4] $interface_gw_ipv4 = undef,
   Optional[Stdlib::IP::Address::V6] $interface_gw_ipv6 = undef,
 )
