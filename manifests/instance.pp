@@ -12,9 +12,10 @@
 # @interface_alias
 #   The alias (name) for the tap-windows6 adapter. For the support machine this
 #   should usually be set to 'SupportDevice0'.
-# @messagedevice
-#   The name of the interface through which the HLK clients (should)
-#   communicate with the HLK controller.
+# @messagedevice_description
+#   The description field of the interface through which the HLK clients (should)
+#   communicate with the HLK controller. Used as a filter for selecting which network
+#   interface to rename.
 # @interface_ipv4
 #   The IPv4 address for the tap-windows6 adapter, including netmask in CIDR notation.
 # @interface_ipv6
@@ -34,8 +35,8 @@ define hlk_tap6_openvpn::instance
   Stdlib::IP::Address::V4           $interface_ipv4,
   Stdlib::IP::Address::V6           $interface_ipv6,
   String                            $static_key,
+  String                            $messagedevice_description,
   Integer                           $port = 1194,
-  String                            $messagedevice = 'Ethernet',
   Optional[String]                  $allow_address_ipv4 = '127.0.0.1',
   Optional[Stdlib::IP::Address::V4] $interface_gw_ipv4 = undef,
   Optional[Stdlib::IP::Address::V6] $interface_gw_ipv6 = undef,
@@ -97,9 +98,9 @@ define hlk_tap6_openvpn::instance
   #
   # https://docs.microsoft.com/en-us/windows-hardware/test/hlk/testref/lan-testing-prerequisites
   #
-  dsc_xnetadaptername { $messagedevice:
-    dsc_newname              => $messagedevice,
-    dsc_interfacedescription => 'MessageDevice',
+  dsc_xnetadaptername { 'MessageDevice':
+    dsc_newname              => 'MessageDevice',
+    dsc_interfacedescription => $messagedevice_description,
   }
 
   # Define static IPv4 and IPv6 settings for the tap-windows6 adapter. This
